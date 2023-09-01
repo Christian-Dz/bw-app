@@ -17,6 +17,8 @@ app.set("views", "./views");
 
 //app.use(express.static("public", { extensions: ["html", "css", "js"] }));
 app.use(express.static(__dirname + "/public")); //buscar diferencia
+app.use(express.urlencoded({ extended: true}));  // middleware para parsear formularios
+
 app.use("/", require("./routers/home"));
 app.use("/auth", require("./routers/auth"));
 
