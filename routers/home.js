@@ -5,6 +5,7 @@ const {
   eliminarUrl,
   editarUrlForm,
   editarUrl,
+  redirect
 } = require("../controllers/homeController");
 const urlValidar = require("../middlewares/urlValida");
 const router = express.Router();
@@ -16,7 +17,7 @@ router.post("/", urlValidar, agregarUrl);
 router.get("/eliminar/:id", eliminarUrl);
 router.get("/editar/:id", editarUrlForm);
 router.post("/editar/:id", urlValidar, editarUrl);
-
+router.get("/:shortUrl", redirect);
 
 
 
