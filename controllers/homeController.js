@@ -3,7 +3,7 @@ const Url = require("../models/Url.js"); // Los controladores son los que van en
 
 const leerUrls = async (req, res) => {
   try {
-    const urls = await Url.find().lean();
+    const urls = await Url.find().lean(); // el ".lean() es porque mongoose trae un objeto con diferentes caracteristicas y no los puede leer hbs, con json eso se soluciona o con Rect, y lean lo que hace es convertirlo a javascript normal"
     res.render("home", { urls: urls });
   } catch (error) {
     console.log(error);
@@ -34,15 +34,33 @@ const eliminarUrl = async (req, res) => {
   }
 };
 
+const editarUrlForm = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const url = await Url.findById(id).lean();
+    res.render("home", {url});
+  } catch (error) {
+    console.log(error);
+    res.send("Algo falló al editar la url");
+  }
+};
 
-
-
-
-
-
+const editarUrl = async (req, res) => {
+  const { id } = req.params;
+  const { origin } = req.body;
+  try {
+    await Url.findByIdAndUpdate(id, { origin });
+    res.redirect("/");
+  } catch (error) {
+    console.log(error);
+    res.send("Algo falló al editar la url");
+  }
+};
 
   module.exports = {
     leerUrls,
     agregarUrl,
     eliminarUrl,
+    editarUrlForm,
+    editarUrl,
   };
