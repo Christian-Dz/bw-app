@@ -1,28 +1,29 @@
-
 const Url = require("../models/Url.js"); // Los controladores son los que van en llaves
+const { nanoid } = require("nanoid");
 
 const leerUrls = async (req, res) => {
+  console.log(req.user);
   try {
     const urls = await Url.find().lean(); // el ".lean() es porque mongoose trae un objeto con diferentes caracteristicas y no los puede leer hbs, con json eso se soluciona o con Rect, y lean lo que hace es convertirlo a javascript normal"
-    res.render("home", { urls: urls });
+    return res.render("home", { urls: urls });
   } catch (error) {
     console.log(error);
-    res.send("Algo falló al leer las urls");
+    return res.send("Algo falló al leer las urls");
   }
 };
 
 const agregarUrl = async (req, res) => {
   const { origin } = req.body;
   try {
-    const url = new Url({ origin: origin });
+    const url = new Url({ origin: origin, shortUrl: nanoid(6) });
     await url.save();
-    res.redirect("/");
+    return res.redirect("/");
   } catch (error) {
     console.log(error);
-    res.send("Algo falló al crear la url");
+    return res.send("Algo falló al crear la url");
   }
 };
-
+// HASTA AQUI ESTA REVISADO
 const eliminarUrl = async (req, res) => {
   const { id } = req.params;
   try {
@@ -30,7 +31,7 @@ const eliminarUrl = async (req, res) => {
     res.redirect("/");
   } catch (error) {
     console.log(error);
-    res.send("Algo falló al eliminar la url");
+    return res.send("Algo falló al eliminar la url");
   }
 };
 
@@ -38,10 +39,10 @@ const editarUrlForm = async (req, res) => {
   const { id } = req.params;
   try {
     const url = await Url.findById(id).lean();
-    res.render("home", {url});
+    return res.render("home", {url});
   } catch (error) {
     console.log(error);
-    res.send("Algo falló al editar la url");
+    return res.send("Algo falló al editar la url en editarUrlForm");
   }
 };
 
@@ -50,28 +51,23 @@ const editarUrl = async (req, res) => {
   const { origin } = req.body;
   try {
     await Url.findByIdAndUpdate(id, { origin });
-    res.redirect("/");
+    return res.redirect("/");
   } catch (error) {
     console.log(error);
-    res.send("Algo falló al editar la url");
+    return res.send("Algo falló al editar la url en editarUrl");
   }
 };
 
 const redirect = async (req, res) => {
   const { shortUrl } = req.params;
   try {
-    const urlDb = await Url.findOne({ shortUrl });
-    res.redirect(urlDb.origin);
+    const urlDb = await Url.findOne({ shortUrl: shortUrl  });
+    return res.redirect(urlDb.origin);
   } catch (error) {
     console.log(error);
-    res.send("Algo falló al editar la url");
+    return res.send("Algo falló en el redirect");
   }
 };
-
-
-
-
-
 
 
   module.exports = {

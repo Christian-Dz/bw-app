@@ -1,9 +1,34 @@
+const express = require("express");
+const session = require("express-session");
+const flash = require("connect-flash");
+const passport = require("passport");
+const { create } = require("express-handlebars");
 require("dotenv").config();
 require("./database/db.js");
-const { create } = require("express-handlebars");
-const express = require("express");
+const User = require("./models/User.js");
 const app = express();
+
 const port = process.env.PORT;
+
+app.use(session({
+  secret: "qwerty",
+  resave: false,
+  saveUninitialized: false,
+  name: "secret-name-here",
+}));
+
+
+app.use(flash());
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.serializeUser((user, done) => {
+  done(null, {id: user._id, userName: user.userName});
+});
+passport.deserializeUser(async (user, done) => {
+  const userDb = await User.findById(user.id);
+  return done(null, { id: userDb._id, userName: userDb.userName });
+});
 
 
 const hbs = create({
