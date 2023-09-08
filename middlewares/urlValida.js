@@ -1,5 +1,4 @@
 const { URL } = require("url");
-
 const urlValidar = (req, res, next) => {
   try {
     const { origin } = req.body;
@@ -11,12 +10,16 @@ const urlValidar = (req, res, next) => {
       ) {
         return next();
       }
-    } else {
-      throw new Error("Url no válida");
     }
+    throw new Error("tiene que contener https://");
+    //throw new Error("url no válida 😲");
   } catch (error) {
-    // console.log(error);
-    return res.send("url no valida");
+    if (error.message === "Invalid URL") {
+      req.flash("mensajes", [{ msg: "URL no válida" }]);
+    } else {
+      req.flash("mensajes", [{ msg: error.message }]);
+    }
+    return res.redirect("/");
   }
 };
 

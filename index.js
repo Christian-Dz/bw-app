@@ -44,6 +44,13 @@ app.set("views", "./views");
 app.use(express.static(__dirname + "/public")); //buscar diferencia
 app.use(express.urlencoded({ extended: true}));  // middleware para parsear formularios
 
+app.use((req, res, next) => {
+  res.locals.mensajes = req.flash("mensajes");
+  next();
+});
+
+
+
 app.use("/", require("./routers/home"));
 app.use("/auth", require("./routers/auth"));
 

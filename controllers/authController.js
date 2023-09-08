@@ -3,7 +3,11 @@ const { validationResult } = require("express-validator");
 const { nanoid } = require("nanoid");
 
 const signForm = (req, res) => {
-  res.render("sign", { mensajes: req.flash("mensajes") });
+  res.render("sign");
+};
+
+const loginForm = (req, res) => {
+  res.render("login");
 };
 
 const signUser = async (req, res) => {
@@ -46,9 +50,7 @@ const confirmAcc = async (req, res) => {
   }
 };
 //---------------------------------------------------------------------------------------------->>>>>>>>
-const loginForm = (req, res) => {
-  res.render("login", { mensajes: req.flash("mensajes") });
-};
+
 
 const loginUser = async (req, res) => {
   const errors = validationResult(req);
@@ -79,7 +81,7 @@ const loginUser = async (req, res) => {
 
 
 const closeSesion = (req, res) => {
-  req.logout((err) => {
+  req.logout((err) => {  // a partir de passport 0.6.0 se requiere el callback en el logout()
     if (err) return next(err);
   });
   return res.redirect("/auth/login");
