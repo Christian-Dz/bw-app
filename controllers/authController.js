@@ -1,6 +1,8 @@
 const User = require("../models/User.js");
 const { validationResult } = require("express-validator");
 const { nanoid } = require("nanoid");
+const nodemailer = require("nodemailer");
+require("dotenv").config();
 
 const signForm = (req, res) => {
   res.render("sign");
@@ -23,9 +25,27 @@ const signUser = async (req, res) => {
     if (user) throw new Error("User already exists");
     user = new User({ userName, email, password, tokenConfirm: nanoid() });
     await user.save();
-    // HASTA AQUI ESTA REVISADO
+
+    const transport = nodemailer.createTransport({
+      host: "sandbox.smtp.mailtrap.io",
+      port: 2525,
+      auth: {
+        user: process.env.MAILTRAP_USER,
+        pass: process.env.MAILTRAP_PASS
+      }
+    });
+
+    await transport.sendMail({
+      from: '"Fred Foo 👻" <foo@example.com>', // sender address
+      to: user.email, // list of receivers
+      subject: "Verify Account", // Subject line
+      // html: "<a href='http://localhost:3000/auth/confirm/" + user.tokenConfirm + "'>Hello world?</a>"
+      html:
+        `<a href="http://localhost:3000/auth/confirmAcc/${user.tokenConfirm}"> Click aqui para verificar cuenta </a>`,
+    });
+
     req.flash("mensajes", { msg: "revisa tu correo para confirmar tu cuenta" });
-    res.redirect("/auth/login"); // res.redirect("/login")
+    res.redirect("/auth/login");
   } catch (error) {
     req.flash("mensajes", [{ msg: error.message }]);
     return res.redirect("/auth/signin");
