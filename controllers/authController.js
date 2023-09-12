@@ -39,7 +39,6 @@ const signUser = async (req, res) => {
       from: '"Fred Foo 👻" <foo@example.com>', // sender address
       to: user.email, // list of receivers
       subject: "Verify Account", // Subject line
-      // html: "<a href='http://localhost:3000/auth/confirm/" + user.tokenConfirm + "'>Hello world?</a>"
       html:
         `<a href="http://localhost:3000/auth/confirmAcc/${user.tokenConfirm}"> Click aqui para verificar cuenta </a>`,
     });
